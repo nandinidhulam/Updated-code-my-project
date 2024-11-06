@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blinking Text Example</title>
+    <style>
+        /* Blinking effect for text */
+        .blink {
+            animation: blinker 1s step-start infinite;
+            font-size: 24px;
+            font-weight: bold;
+            color: green;
+        }
+
+        /* Keyframes for blinking animation */
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="blink">BLINK</div>
+</body>
+</html>
