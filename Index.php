@@ -3,7 +3,7 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,27 +12,7 @@
     <title>Image Gallery</title>
 </head>
 <body>
-<section>
-	<div class="container">
-        <div class="card">
-			<div class="card-body">
-				<?php
-					$sql = "SELECT id, ImagePath FROM tblimages";
-					$result = $conn->query($sql);
-                    if ($result->num_rows > 0) {
-						while ($row = $result->fetch_assoc()) {
-							 echo '<a href="practice.php?imageId=' . $row['id'] . '">
-                            <img src="' . htmlspecialchars($row['ImagePath']) . '" class="myImg" style="max-width: 50%; height: auto; cursor: pointer;"></a>';
-						}
-					} else {
-						echo "No images found.";
-					}
-
-				?>
-		    </div>
-		</div>
-	</div>
-</section>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" ></script>
 </body>
+</html> 
 </html> 
