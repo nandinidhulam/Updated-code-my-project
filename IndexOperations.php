@@ -17,15 +17,16 @@ if ($conn->connect_error) {
 function fetchImages($conn) {
     $sql = "SELECT id, ImagePath FROM tblimages";
     $result = $conn->query($sql);
-    
-    $images = [];
+
     if ($result->num_rows > 0) {
-        // Fetch all image paths
         while ($row = $result->fetch_assoc()) {
-            $images[] = $row;
+            echo '<a href="practice.php?imageId=' . htmlspecialchars($row['id']) . '">
+                    <img src="' . htmlspecialchars($row['ImagePath']) . '" class="myImg" style="max-width: 50%; height: auto; cursor: pointer;" alt="Image"></a>';
         }
+    } else {
+        echo "No images found.";
     }
-    return $images;
 }
 
+fetchImages($conn);
 ?>
