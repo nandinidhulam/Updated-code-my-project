@@ -15,7 +15,7 @@ img {
             color: white; /* Text color for visibility */
     }
    .image-container img {
-            max-width: 100%;
+            width: 100%;
             height: 100%;
     }
    .overlay {
@@ -32,15 +32,25 @@ img {
 			font-family: Arial, sans-serif; 
 			font-weight: bold; 
 			font-style: italic; 
+			/* animation: blinker 1s step-start infinite; */
+            /* font-size: 24px; */
+            /* font-weight: bold; */
+            /* color: green; */
     }
-
+ @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
   
 #Logo {
     position: absolute; 
-    top: 10px; 
-    left:80px; /*20px*/
-    max-width: 100px; 
-    height: auto; 
+    top: 20px; 
+    left:20px; /*20px*/
+	animation: blinker 1s step-start infinite;
+    font-size: 24px;
+    font-weight: bold;
+    color: green;
 }
    h2 {
     text-align: center; 
@@ -52,7 +62,7 @@ img {
 	.contact-info {
     position: absolute;
     bottom: 10px; 
-    left: 100px; /*20px*/
+    left:30px; /*20px*/
     max-width:70%; 
     font-size: 15px; 
     font-family: Arial, sans-serif; 
@@ -149,3 +159,19 @@ img {
     margin-bottom: 10px;          
     letter-spacing: 1px;          
 }
+
+
+
+/* .blink { */
+            /* animation: blinker 1s step-start infinite; */
+            /* font-size: 24px; */
+            /* font-weight: bold; */
+            /* color: green; */
+        /* } */
+
+        /* /* Keyframes for blinking animation */ */
+        /* @keyframes blinker { */
+            /* 50% { */
+                /* opacity: 0; */
+            /* } */
+        /* } */
