@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 
 $servername = "localhost"; 
 $username = "root"; 
-$password = ""; 
+$password = "";   
 $dbname = "adbanao_db"; 
 
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -44,7 +44,7 @@ $infoResult = $conn->query($sqlInfo);
 
 if ($infoResult && $infoResult->num_rows > 0) {
     $businessInfo = $infoResult->fetch_assoc(); 
-    $logoPath = htmlspecialchars($businessInfo['Logo']);
+    $logoPath = htmlspecialchars($businessInfo['Logo']);  
 }
 
 if ($imagePath) {
@@ -52,7 +52,7 @@ if ($imagePath) {
         die('Image file does not exist: ' . $imagePath);
     }
 
-    ob_end_clean();
+    ob_end_clean(); 
     $banner = imagecreatefromjpeg($imagePath); 
 
     if (!$banner) {
@@ -64,59 +64,66 @@ if ($imagePath) {
 
     $resizedBanner = imagecreatetruecolor($newWidth, $newHeight);
     imagecopyresampled($resizedBanner, $banner, 0, 0, 0, 0, $newWidth, $newHeight, imagesx($banner), imagesy($banner));
-
+	
+    $blue = imagecolorallocate($resizedBanner, 0, 123, 255);
     $white = imagecolorallocate($resizedBanner, 255, 255, 255); 
-    $red = imagecolorallocate($resizedBanner, 255, 0, 0); // Red color for contact info
-    $green = imagecolorallocate($resizedBanner, 79, 161, 47);  // Green color for the business name
-
-    // Load font
-    $fontPath = 'C:\xampp\htdocs\Nandini\my project\font\arial.ttf'; // Update this path as necessary
+    $red = imagecolorallocate($resizedBanner, 255, 0, 0);
+    $green = imagecolorallocate($resizedBanner, 79, 161, 47);  
+   
+    $fontPath = 'C:/xampp/htdocs/Nandini/my_project/font/arial.ttf';
     if (!file_exists($fontPath)) {
         die('Font file does not exist: ' . $fontPath);
     }
 
-    $businessNameX = intval(($newWidth - (strlen($businessInfo['BusinessName']) * 15)) / 2); // Center business name
-    imagettftext($resizedBanner, 20, 0, $businessNameX, 70, $green, $fontPath, htmlspecialchars($businessInfo['BusinessName'])); // Business name at top center
+    $businessNameX = intval(($newWidth - (strlen($businessInfo['BusinessName']) * 15)) / 2); 
+    imagettftext($resizedBanner, 20, 0, $businessNameX, 70, $green, $fontPath, htmlspecialchars($businessInfo['BusinessName'])); 
     
-    // Bottom left contact information (red color for contact info)
-    $contactY = $newHeight - 90; // Starting Y position for contact info
+    $contactY = $newHeight - 90; 
     imagettftext($resizedBanner, 20, 0, 20, $contactY, $red, $fontPath, "Contact Number: " . htmlspecialchars($businessInfo['ContactNumber']));
     imagettftext($resizedBanner, 20, 0, 20, $contactY + 30, $red, $fontPath, "Address: " . htmlspecialchars($businessInfo['Address']));
     imagettftext($resizedBanner, 20, 0, 20, $contactY + 60, $red, $fontPath, "Email: " . htmlspecialchars($businessInfo['Email']));
-    imagettftext($resizedBanner, 20, 0, 20, $contactY + 90, $red, $fontPath, "Website: " . htmlspecialchars($businessInfo['Website']));
+    imagettftext($resizedBanner, 20, 0, 20, $contactY + 90, $blue, $fontPath, "Website: " . htmlspecialchars($businessInfo['Website']));
 
-    // Add the logo on the left side
     if ($logoPath && file_exists($logoPath)) {
-        $logo = imagecreatefromjpeg($logoPath); // Assuming the logo is in JPEG format
-        
-        // Resize and place the logo
-        $logoWidth = 150;  // Desired width for logo
-        $logoHeight = 150; // Maintain aspect ratio if necessary
-        
-        // Get original logo dimensions
-        list($originalLogoWidth, $originalLogoHeight) = getimagesize($logoPath);
-        
-        // Create a new true color image to copy the resized logo
-        $resizedLogo = imagecreatetruecolor($logoWidth, $logoHeight);
-        
-        // Retain PNG transparency
-        imagealphablending($resizedLogo, false);
-        imagesavealpha($resizedLogo, true);
-        $transparent = imagecolorallocatealpha($resizedLogo, 0, 0, 0, 127);
-        imagefilledrectangle($resizedLogo, 0, 0, $logoWidth, $logoHeight, $transparent);
+        $logoMime = mime_content_type($logoPath);
+        switch ($logoMime) {
+            case 'image/jpeg':
+                $logo = imagecreatefromjpeg($logoPath);
+                break;
+            case 'image/png':
+                $logo = imagecreatefrompng($logoPath);
+                break;
+            case 'image/gif':
+                $logo = imagecreatefromgif($logoPath);
+                break;
+            default:
+                die('Unsupported logo format: ' . $logoMime);
+        }
 
-        // Resize the logo
-        imagecopyresampled($resizedLogo, $logo, 0, 0, 0, 0, $logoWidth, $logoHeight, $originalLogoWidth, $originalLogoHeight);
+        if ($logo) {
+            $logoWidth = 150;
+            $logoHeight = 150;
+            list($originalLogoWidth, $originalLogoHeight) = getimagesize($logoPath);
 
-        // Copy resized logo onto the banner
-        imagecopy($resizedBanner, $resizedLogo, 20, 20, 0, 0, $logoWidth, $logoHeight);
-        
-        // Clean up
-        imagedestroy($resizedLogo);
-        imagedestroy($logo);
+            $resizedLogo = imagecreatetruecolor($logoWidth, $logoHeight);
+
+            // Preserve transparency for PNG and GIF
+            imagealphablending($resizedLogo, false);
+            imagesavealpha($resizedLogo, true);
+            $transparent = imagecolorallocatealpha($resizedLogo, 0, 0, 0, 127);
+            imagefilledrectangle($resizedLogo, 0, 0, $logoWidth, $logoHeight, $transparent);
+
+            imagecopyresampled($resizedLogo, $logo, 0, 0, 0, 0, $logoWidth, $logoHeight, $originalLogoWidth, $originalLogoHeight);
+
+            imagecopy($resizedBanner, $resizedLogo, 20, 20, 0, 0, $logoWidth, $logoHeight);
+
+            imagedestroy($resizedLogo);
+            imagedestroy($logo);
+        } else {
+            die('Failed to create image from the logo source.');
+        }
     }
 
-    // Output the image as a downloadable file
     header('Content-Type: image/jpeg');
     header('Content-Disposition: attachment; filename="banner.jpeg"');
 
@@ -124,7 +131,6 @@ if ($imagePath) {
         die('Failed to generate the image.');
     }
 
-    // Clean up
     imagedestroy($resizedBanner);
     imagedestroy($banner);
 } else {
