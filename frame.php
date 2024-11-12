@@ -32,6 +32,14 @@ $businessInfo = fetchBusinessInfo($conn);
         function changeBannerImage(frameSrc) {
             document.getElementById('bannerImage').src = frameSrc;
         }
+
+        function showFrames() {
+            document.getElementById('framesModal').style.display = 'block';
+        }
+
+        function hideFrames() {
+            document.getElementById('framesModal').style.display = 'none';
+        }
     </script>
 </head>
 <body>
@@ -54,23 +62,9 @@ $businessInfo = fetchBusinessInfo($conn);
                         </div>
                     </div>
 
-                    <?php
-                    $sql = "SELECT id, Frame FROM tblframes";
-                    $result = $conn->query($sql);
+                    <button class="btn btn-secondary" onclick="showFrames()">Select Frame</button>
 
-                    if ($result) {
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                echo '<img src="' . htmlspecialchars($row['Frame']) . '" class="Frame" style="max-width: 25%; height: auto; cursor: pointer;" onclick="changeBannerImage(\'' . htmlspecialchars($row['Frame']) . '\')">';
-                            }
-                        } else {
-                            echo "No frames found.";
-                        }
-                    } else {
-                        echo "Error: " . $conn->error;
-                    }
-                    ?>
-                    <br>
+                    <br><br>
                     <a href="download.php?imageId=<?php echo intval($_GET['imageId']); ?>" class="btn btn-primary">Download Banner</a>
                 <?php else: ?>
                     <p>No image selected.</p>
@@ -78,7 +72,33 @@ $businessInfo = fetchBusinessInfo($conn);
             </div>
         </div>
     </div>
+
+      <div id="framesModal" class="modal">
+        <div class="modal-content">
+            <span onclick="hideFrames()" style="cursor: pointer; float: right; font-size: 24px; color: red;">&times;</span>
+            <h4>Select a Frame</h4>
+            <div class="frame-container">
+                <?php
+                $sql = "SELECT id, Frame FROM tblframes";
+                $result = $conn->query($sql);
+
+                if ($result) {
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo '<img src="' . htmlspecialchars($row['Frame']) . '" class="Frame" style="max-width: 25%; height: auto; cursor: pointer;" onclick="changeBannerImage(\'' . htmlspecialchars($row['Frame']) . '\'); hideFrames();">';
+                        }
+                    } else {
+                        echo "No frames found.";
+                    }
+                } else {
+                    echo "Error: " . $conn->error;
+                }
+                ?>
+            </div>
+        </div>
+    </div>
 </section>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </body>
 </html>
