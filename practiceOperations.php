@@ -63,7 +63,7 @@ function fetchFrames($conn) {
             }
         }
     } else {
-        echo "Error: " . $conn->error; // Handle the error
+        echo "Error: " . $conn->error; 
     }
     
     return $frames;
