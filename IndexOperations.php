@@ -20,8 +20,8 @@ function fetchImages($conn) {
 
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            echo '<a href="practice.php?imageId=' . htmlspecialchars($row['id']) . '">
-                    <img src="' . htmlspecialchars($row['ImagePath']) . '" class="myImg" style="max-width: 50%; height: auto; cursor: pointer;" alt="Image"></a>';
+            echo '<a href="practice.php?imageId=' .($row['id']) . '">
+                    <img src="' .($row['ImagePath']) . '" class="Img"></a>';
         }
     } else {
         echo "No images found.";
