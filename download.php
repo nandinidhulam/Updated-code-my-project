@@ -28,7 +28,7 @@ if (isset($_GET['imageId'])) {
 
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            $imagePath = htmlspecialchars($row['ImagePath']); 
+            $imagePath = $row['ImagePath']; 
         } else {
             die('No image found with that ID.');
         }
@@ -44,7 +44,7 @@ $infoResult = $conn->query($sqlInfo);
 
 if ($infoResult && $infoResult->num_rows > 0) {
     $businessInfo = $infoResult->fetch_assoc(); 
-    $logoPath = htmlspecialchars($businessInfo['Logo']);  
+    $logoPath = $businessInfo['Logo'];  
 }
 
 if ($imagePath) {
@@ -64,25 +64,28 @@ if ($imagePath) {
 
     $resizedBanner = imagecreatetruecolor($newWidth, $newHeight);
     imagecopyresampled($resizedBanner, $banner, 0, 0, 0, 0, $newWidth, $newHeight, imagesx($banner), imagesy($banner));
-	
-    $blue = imagecolorallocate($resizedBanner, 0, 123, 255);
+
+    $black = imagecolorallocate($resizedBanner, 0, 0, 0); 
     $white = imagecolorallocate($resizedBanner, 255, 255, 255); 
-    $red = imagecolorallocate($resizedBanner, 255, 0, 0);
-    $green = imagecolorallocate($resizedBanner, 79, 161, 47);  
-   
+
     $fontPath = 'C:/xampp/htdocs/Nandini/my_project/font/arial.ttf';
     if (!file_exists($fontPath)) {
         die('Font file does not exist: ' . $fontPath);
     }
 
-    $businessNameX = intval(($newWidth - (strlen($businessInfo['BusinessName']) * 15)) / 2); 
-    imagettftext($resizedBanner, 20, 0, $businessNameX, 70, $green, $fontPath, htmlspecialchars($businessInfo['BusinessName'])); 
-    
-    $contactY = $newHeight - 90; 
-    imagettftext($resizedBanner, 20, 0, 20, $contactY, $red, $fontPath, "Contact Number: " . htmlspecialchars($businessInfo['ContactNumber']));
-    imagettftext($resizedBanner, 20, 0, 20, $contactY + 30, $red, $fontPath, "Address: " . htmlspecialchars($businessInfo['Address']));
-    imagettftext($resizedBanner, 20, 0, 20, $contactY + 60, $red, $fontPath, "Email: " . htmlspecialchars($businessInfo['Email']));
-    imagettftext($resizedBanner, 20, 0, 20, $contactY + 90, $blue, $fontPath, "Website: " . htmlspecialchars($businessInfo['Website']));
+    $contactBackgroundHeight = 230; 
+    imagefilledrectangle($resizedBanner, 10, $newHeight - $contactBackgroundHeight - 10, $newWidth - 10, $newHeight - 10, $white);
+
+    $textX = 20; 
+    $textY = $newHeight - $contactBackgroundHeight + 30; 
+    $lineSpacing = 40; 
+
+    imagettftext($resizedBanner, 20, 0, $textX, $textY, $black, $fontPath, "Business Name: " . $businessInfo['BusinessName']);
+
+    imagettftext($resizedBanner, 20, 0, $textX, $textY + $lineSpacing, $black, $fontPath, "Contact Number: " . $businessInfo['ContactNumber']);
+    imagettftext($resizedBanner, 20, 0, $textX, $textY + $lineSpacing * 2, $black, $fontPath, "Address: " . $businessInfo['Address']);
+    imagettftext($resizedBanner, 20, 0, $textX, $textY + $lineSpacing * 3, $black, $fontPath, "Email: " . $businessInfo['Email']);
+    imagettftext($resizedBanner, 20, 0, $textX, $textY + $lineSpacing * 4, $black, $fontPath, "Website: " . $businessInfo['Website']);
 
     if ($logoPath && file_exists($logoPath)) {
         $logoMime = mime_content_type($logoPath);
@@ -101,13 +104,12 @@ if ($imagePath) {
         }
 
         if ($logo) {
-            $logoWidth = 150;
-            $logoHeight = 150;
+            $logoWidth = 400;   //increase the logo width
+            $logoHeight = 200; //increase the logo height
             list($originalLogoWidth, $originalLogoHeight) = getimagesize($logoPath);
 
             $resizedLogo = imagecreatetruecolor($logoWidth, $logoHeight);
 
-            // Preserve transparency for PNG and GIF
             imagealphablending($resizedLogo, false);
             imagesavealpha($resizedLogo, true);
             $transparent = imagecolorallocatealpha($resizedLogo, 0, 0, 0, 127);
